@@ -1,0 +1,6 @@
+export GITHUB_OWNER=ppworks
+export BUILD_FOR=pplog
+export BASE_BRANCH=master
+export GITHUB_ACCOUNT=ppworks2
+export GITHUB_ACCESS_TOKEN=
+export PULL_REQUEST_TITLE=

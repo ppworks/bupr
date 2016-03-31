@@ -1,0 +1,84 @@
+#!/bin/bash
+
+if [ ! $GITHUB_OWNER ]; then
+  echo 'Invalid $GITHUB_OWNER.'
+fi
+
+if [[ ! $BUILD_FOR =~ ^[-_0-9a-zA-Z]+$ ]]; then
+  echo 'Invalid $BUILD_FOR.'
+fi
+
+if [ ! $GITHUB_ACCOUNT ]; then
+  GITHUB_ACCOUNT=ppworks2
+fi
+
+if [ ! $COMMITER_EMAIL ]; then
+  COMMITER_EMAIL=$GITHUB_ACCOUNT@users.noreply.github.com
+fi
+
+if [ ! $PULL_REQUEST_TITLE ]; then
+  PULL_REQUEST_TITLE='bundle update'
+fi
+
+if [ ! $BASE_BRANCH ]; then
+  BASE_BRANCH=master
+fi
+
+if [ ! $BUPR_PATH ]; then
+  BUPR_PATH=$PWD
+fi
+
+REPOSITORY_PREFIX=https://$GITHUB_ACCESS_TOKEN:x-oauth-basic@github.com/$GITHUB_OWNER
+REPOSITORY_PATH=tmp/$BUILD_FOR
+REPOSITORY_URL=$REPOSITORY_PREFIX/$BUILD_FOR.git
+BASE_REMOTE_BRANCH=origin/$BASE_BRANCH
+BUNDLE_GEMFILE=$BUPR_PATH/Gemfile
+HEAD_DATE=$(date +%Y%m%d_%H-%M-%S)
+HEAD=bupr/update-$HEAD_DATE
+
+git config user.name $GITHUB_ACCOUNT
+git config user.email $COMMITER_EMAIL
+
+cd $BUPR_PATH
+
+if [ -d $REPOSITORY_PATH ];then
+  rm -fr $REPOSITORY_PATH
+fi
+
+git clone $REPOSITORY_URL $REPOSITORY_PATH
+cd $REPOSITORY_PATH
+
+git checkout -b $HEAD $BASE_REMOTE_BRANCH
+bundle update --quiet $BUNDLE_UPDATE_GEMS
+git add Gemfile.lock
+git commit -m "Bundle update $HEAD_DATE"
+
+bundle exec git httpsable-push origin $HEAD
+bundle exec pull-request-create \
+  --title="$PULL_REQUEST_TITLE $HEAD_DATE" \
+  --base=$BASE_BRANCH \
+  --head=$HEAD
+
+# Check Gemfile.lock diff
+git diff --name-only $BASE_REMOTE_BRANCH \
+ | grep ".*[gG]emfile.lock$" || RETURN_CODE=$?
+
+case "$RETURN_CODE" in
+  "" ) echo "found" ;;
+  "1" )
+    echo "not found"
+    exit 0 ;;
+  * )
+    echo "Error"
+    exit $RETURN_CODE ;;
+esac
+
+# Post comment with CompareLinker
+git diff --name-only origin/master \
+ | grep ".*[gG]emfile.lock$" \
+ | xargs bundle exec compare-linker-wrapper --base $BASE_REMOTE_BRANCH \
+    --formatter CompareLinker::Formatter::Markdown \
+ | bundle exec text-to-checkstyle \
+ | bundle exec saddler report \
+    --require saddler/reporter/github \
+    --reporter Saddler::Reporter::Github::PullRequestComment

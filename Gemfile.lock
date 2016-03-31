@@ -1,0 +1,70 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.4.0)
+    compare_linker (1.2.1)
+      httpclient
+      octokit
+    compare_linker_wrapper (0.1.0)
+      bundler
+      compare_linker
+      git
+      octokit
+      thor
+    env_branch (0.2.1)
+    faraday (0.9.2)
+      multipart-post (>= 1.2, < 3)
+    git (1.2.9.1)
+    git_clone_url (2.0.0)
+      uri-ssh_git (>= 2.0)
+    git_diff_parser (2.2.0)
+    git_httpsable-push (0.1.2)
+      git (~> 1.0)
+      git_clone_url (>= 2.0)
+      thor
+    httpclient (2.7.1)
+    multipart-post (2.0.0)
+    nori (2.6.0)
+    octokit (4.3.0)
+      sawyer (~> 0.7.0, >= 0.5.3)
+    pull_request-create (0.1.2)
+      git
+      git_clone_url (>= 2.0)
+      octokit
+      thor
+    saddler (0.1.1)
+      saddler-reporter-text
+      thor
+    saddler-reporter-github (0.3.0)
+      git_diff_parser (>= 2.0, < 3.0)
+      octokit
+      saddler-reporter-support (>= 0.1, < 0.2)
+      saddler-reporter-support-git (>= 0.3, < 0.4)
+    saddler-reporter-support (0.1.1)
+      nori
+    saddler-reporter-support-git (0.3.0)
+      env_branch (>= 0.2, < 0.3)
+      git (>= 1.0, < 2.0)
+      git_clone_url (>= 2.0, < 3.0)
+    saddler-reporter-text (0.2.1)
+    sawyer (0.7.0)
+      addressable (>= 2.3.5, < 2.5)
+      faraday (~> 0.8, < 0.10)
+    text_to_checkstyle (0.1.0)
+      thor
+    thor (0.19.1)
+    uri-ssh_git (2.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  compare_linker_wrapper
+  git_httpsable-push
+  pull_request-create
+  saddler
+  saddler-reporter-github
+  text_to_checkstyle
+
+BUNDLED WITH
+   1.11.2
