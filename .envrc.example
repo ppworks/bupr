@@ -1,6 +1,5 @@
-export GITHUB_OWNER=ppworks
-export BUILD_FOR=pplog
-export BASE_BRANCH=master
-export GITHUB_ACCOUNT=ppworks2
-export GITHUB_ACCESS_TOKEN=
-export PULL_REQUEST_TITLE=
+export GITHUB_OWNER=ppworks # your repositoriy owner
+export BUILD_FOR=pplog # your repository name
+export BASE_BRANCH=master # branch for PR
+export GITHUB_ACCOUNT=ppworks2 # bot name
+export GITHUB_ACCESS_TOKEN= # token of bot
